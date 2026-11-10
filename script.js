@@ -1,4 +1,9 @@
-const phrases = ["Programmer", "Video Editor", "ESO Student"];
+const typewriterPhrases = {
+    es: ["desarrollador de aplicaciones", "técnico de hardware", "futuro administrador de sistemas"],
+    en: ["an App Developer", "a PC Hardware Technician", "an Aspiring Systems Administrator"]
+};
+let phrases = typewriterPhrases.es;
+let typingTimer;
 let phraseIndex = 0;
 let charIndex = 0;
 const typingSpeed = 80;
@@ -10,11 +15,11 @@ function typeWriter() {
     const currentPhrase = phrases[phraseIndex];
     
     if (charIndex < currentPhrase.length) {
-        typewriterText.innerHTML += currentPhrase.charAt(charIndex);
+        typewriterText.textContent += currentPhrase.charAt(charIndex);
         charIndex++;
-        setTimeout(typeWriter, typingSpeed);
+        typingTimer = setTimeout(typeWriter, typingSpeed);
     } else {
-        setTimeout(deleteText, delayBetweenPhrases);
+        typingTimer = setTimeout(deleteText, delayBetweenPhrases);
     }
 }
 // ! Borrar el texto
@@ -23,19 +28,26 @@ function deleteText() {
     const currentPhrase = phrases[phraseIndex];
     
     if (charIndex > 0) {
-        typewriterText.innerHTML = currentPhrase.substring(0, charIndex - 1);
+        typewriterText.textContent = currentPhrase.substring(0, charIndex - 1);
         charIndex--;
-        setTimeout(deleteText, deletingSpeed);
+        typingTimer = setTimeout(deleteText, deletingSpeed);
     } else {
         phraseIndex = (phraseIndex + 1) % phrases.length;
-        setTimeout(typeWriter, typingSpeed);
+        typingTimer = setTimeout(typeWriter, typingSpeed);
     }
 }
 
 // * Iniciar la Function
-window.onload = function() {
-    setTimeout(typeWriter, typingSpeed);
-};
+function startTypewriter(language = document.documentElement.lang) {
+    clearTimeout(typingTimer);
+    phrases = typewriterPhrases[language] || typewriterPhrases.es;
+    phraseIndex = 0;
+    charIndex = 0;
+    document.querySelector('.typewriter-text').textContent = '';
+    typingTimer = setTimeout(typeWriter, typingSpeed);
+}
+
+window.addEventListener('load', () => startTypewriter());
 
 
 // ! Hecho por MA_Dev
